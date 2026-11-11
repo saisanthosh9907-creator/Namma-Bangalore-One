@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namma Bangalore One - Design Thinking Smart Queue System</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ka-red': '#C8102E',
+                        'ka-yellow': '#FFD100',
+                        'b1-blue': '#0056B3',
+                        'b1-green': '#198754',
+                        'b1-orange': '#FD7E14',
+                        'b1-purple': '#6F42C1',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Kannada', 'sans-serif'],
+                        kannada: ['Noto Sans Kannada', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .pulse-badge {
+            animation: pulse-ring 2s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(25, 135, 84, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+        }
+        .ticket-receipt {
+            background: #FFFDF0;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 0);
+            background-size: 8px 8px;
+        }
+        .comic-panel {
+            background: white;
+            border: 3px solid #1e293b;
+            box-shadow: 6px 6px 0px #1e293b;
+        }
+        .speech-bubble {
+            position: relative;
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            border-radius: 12px;
+            padding: 8px 12px;
+        }
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: #ffffff transparent;
+            display: block;
+            width: 0;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            bottom: -13px;
+            left: 19px;
+            border-width: 11px 11px 0;
+            border-style: solid;
+            border-color: #0f172a transparent;
+            display: block;
+            width: 0;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-yellow-300">
+
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="bg-gradient-to-r from-ka-red via-red-700 to-red-800 text-white shadow-xl sticky top-0 z-50">
+        <div class="h-1.5 w-full bg-gradient-to-r from-ka-yellow via-yellow-400 to-ka-red"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-ka-yellow text-ka-red font-black text-2xl w-10 h-10 rounded-xl flex items-center justify-center shadow-md transform rotate-2">
+                        B1
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="font-extrabold text-lg sm:text-xl tracking-tight leading-none">Namma Bangalore One</h1>
+                            <span class="bg-yellow-400 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Design Thinking</span>
+                        </div>
+                        <p class="text-xs text-red-100 mt-0.5 font-medium">Queue Optimization Case Study & Dynamic Prototype</p>
+                    </div>
+                </div>
+
+                <!-- Main Module Tabs -->
+                <div class="flex items-center gap-2 bg-slate-900/50 p-1.5 rounded-2xl border border-white/10 text-xs font-semibold">
+                    <button onclick="switchMainTab('storyboard')" id="tabBtnStoryboard" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 bg-ka-yellow text-slate-900 font-bold shadow-sm">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>1. Comic Storyboard</span>
+                    </button>
+                    <button onclick="switchMainTab('prototype')" id="tabBtnPrototype" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 text-white hover:bg-white/10">
+                        <i class="fa-solid fa-laptop-code"></i>
+                        <span>2. Live Prototype</span>
+                    </button>
+                    <button onclick="switchMainTab('outcomes')" id="tabBtnOutcomes" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 text-white hover:bg-white/10">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>3. Metrics & Impact</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- REAL-TIME SMS ALERT TOAST SIMULATOR -->
+    <div id="smsSimulator" class="hidden fixed top-20 right-4 z-50 max-w-md w-full px-4 transition-all duration-500 transform">
+        <div class="bg-slate-900 text-white rounded-2xl p-4 shadow-2xl border-2 border-yellow-400 flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-full bg-yellow-400 text-slate-900 flex items-center justify-center font-bold text-lg flex-shrink-0 mt-0.5">
+                    <i class="fa-solid fa-comment-sms"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-yellow-400 text-xs tracking-wider uppercase">SMS Notification</span>
+                        <span class="text-[10px] text-slate-400">Just Now</span>
+                    </div>
+                    <p id="smsMessageText" class="text-xs font-medium text-slate-100 mt-1 leading-relaxed">
+                        Ticket A-108: Your turn is in ~3 minutes! Please report to Counter 1 (Blue Zone).
+                    </p>
+                </div>
+            </div>
+            <button onclick="hideSmsAlert()" class="text-slate-400 hover:text-white p-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 1: INTERACTIVE COMIC STORYBOARD (BEFORE VS AFTER)                 -->
+        <!-- ========================================================================= -->
+        <section id="sectionStoryboard" class="space-y-8">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="max-w-3xl">
+                    <span class="text-xs font-black uppercase text-ka-red tracking-widest">Empathy Mapping & Intervention</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">Bangalore One Queue Transformation Storyboard</h2>
+                    <p class="text-sm text-slate-600 mt-2">
+                        Visualizing citizen pain points (confusion, time loss, anxiety) alongside proposed Design Thinking solutions written directly beneath each scenario.
+                    </p>
+                </div>
+
+                <!-- Scene Switcher Filters -->
+                <div class="flex flex-wrap gap-2 mt-6 border-b border-slate-200 pb-4">
+                    <button onclick="filterScene('all')" id="btnSceneAll" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white">All 4 Scenes</button>
+                    <button onclick="filterScene(1)" id="btnScene1" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Scene 1: Pre-Arrival</button>
+                    <button onclick="filterScene(2)" id="btnScene2" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Scene 2: Triage & Entry</button>
+                    <button onclick="filterScene(3)" id="btnScene3" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Scene 3: Waiting Area</button>
+                    <button onclick="filterScene(4)" id="btnScene4" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Scene 4: Counter Service</button>
+                </div>
+            </div>
+
+            <!-- STORYBOARD SCENE GRID -->
+            <div class="space-y-10">
+
+                <!-- SCENE 1 -->
+                <div class="scene-card space-y-4" data-scene="1">
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-xl bg-ka-red text-white flex items-center justify-center font-black text-sm">1</span>
+                        <h3 class="text-xl font-bold text-slate-900">Scene 1: Planning & Pre-Arrival</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- BEFORE PANEL -->
+                        <div class="comic-panel rounded-2xl p-5 bg-rose-50/40 relative">
+                            <span class="absolute top-3 right-3 bg-rose-600 text-white font-extrabold text-[10px] px-3 py-1 rounded-full uppercase">BEFORE (As-Is)</span>
+                            <h4 class="font-bold text-rose-900 text-base mb-3"><i class="fa-solid fa-circle-xmark mr-1"></i> Arriving Blind & Unpredictable Crowds</h4>
+                            
+                            <!-- Visual Graphic -->
+                            <div class="bg-white border-2 border-slate-900 rounded-xl p-4 my-3 text-center min-h-[180px] flex flex-col justify-center items-center relative overflow-hidden">
+                                <div class="text-4xl text-rose-500 space-x-2">
+                                    <i class="fa-solid fa-people-group"></i>
+                                    <i class="fa-solid fa-clock-rotate-left text-slate-400"></i>
+                                </div>
+                                <div class="speech-bubble mt-4 text-xs font-bold text-slate-800">
+                                    "I took permission from my office for 30 mins... but the crowd spills onto the sidewalk!"
+                                </div>
+                                <p class="text-[11px] font-semibold text-rose-700 mt-2">Peak hour rush • Zero visibility into queue length</p>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-xl border border-rose-200 text-xs text-rose-950 font-medium">
+                                <strong class="text-rose-700 block mb-1">Problem Statement:</strong>
+                                Citizens travel to centers without knowing live wait times, causing unexpected crowding and anxiety during office hours.
+                            </div>
+                        </div>
+
+                        <!-- AFTER PANEL -->
+                        <div class="comic-panel rounded-2xl p-5 bg-emerald-50/40 relative">
+                            <span class="absolute top-3 right-3 bg-emerald-600 text-white font-extrabold text-[10px] px-3 py-1 rounded-full uppercase">AFTER (To-Be)</span>
+                            <h4 class="font-bold text-emerald-900 text-base mb-3"><i class="fa-solid fa-circle-check mr-1"></i> Live Tracker & Virtual Tokens</h4>
+
+                            <!-- Visual Graphic -->
+                            <div class="bg-white border-2 border-slate-900 rounded-xl p-4 my-3 text-center min-h-[180px] flex flex-col justify-center items-center relative overflow-hidden">
+                                <div class="text-4xl text-emerald-600">
+                                    <i class="fa-solid fa-mobile-screen-button"></i>
+                                    <i class="fa-solid fa-ticket text-amber-400 ml-2"></i>
+                                </div>
+                                <div class="speech-bubble mt-4 text-xs font-bold text-slate-800">
+                                    "Indiranagar B1 shows 8 mins wait. I'll book my token right now from WhatsApp!"
+                                </div>
+                                <p class="text-[11px] font-semibold text-emerald-700 mt-2">Namma B1 App • Virtual Queue Spot Reservation</p>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-xl border border-emerald-200 text-xs text-emerald-950 font-medium">
+                                <strong class="text-emerald-700 block mb-1">Design Thinking Solution:</strong>
+                                Real-time queue monitoring via WhatsApp bot or Namma B1 app lets citizens join the queue remotely and travel only when necessary.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENE 2 -->
+                <div class="scene-card space-y-4" data-scene="2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-xl bg-ka-red text-white flex items-center justify-center font-black text-sm">2</span>
+                        <h3 class="text-xl font-bold text-slate-900">Scene 2: Center Arrival & Triage Navigation</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- BEFORE PANEL -->
+                        <div class="comic-panel rounded-2xl p-5 bg-rose-50/40 relative">
+                            <span class="absolute top-3 right-3 bg-rose-600 text-white font-extrabold text-[10px] px-3 py-1 rounded-full uppercase">BEFORE (As-Is)</span>
+                            <h4 class="font-bold text-rose-900 text-base mb-3"><i class="fa-solid fa-circle-xmark mr-1"></i> Confusion & Counter Hopping</h4>
+
+                            <!-- Visual Graphic -->
+                            <div class="bg-white border-2 border-slate-900 rounded-xl p-4 my-3 text-center min-h-[180px] flex flex-col justify-center items-center relative">
+                                <div class="text-4xl text-slate-700 space-x-3">
+                                    <i class="fa-solid fa-signs-post"></i>
+                                    <i class="fa-solid fa-person-walking-arrow-loop-left text-rose-600"></i>
+                                </div>
+                                <div class="speech-bubble mt-4 text-xs font-bold text-slate-800">
+                                    "Counter 3 sent me to Counter 1, now Counter 1 says go to Counter 4!"
+                                </div>
+                                <p class="text-[11px] font-semibold text-rose-700 mt-2">Unclear paper notices • No service categorization</p>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-xl border border-rose-200 text-xs text-rose-950 font-medium">
+                                <strong class="text-rose-700 block mb-1">Problem Statement:</strong>
+                                Unclear signage leads citizens to join wrong queues, resulting in frustration and staff overload from redirecting visitors.
+                            </div>
+                        </div>
+
+                        <!-- AFTER PANEL -->
+                        <div class="comic-panel rounded-2xl p-5 bg-emerald-50/40 relative">
+                            <span class="absolute top-3 right-3 bg-emerald-600 text-white font-extrabold text-[10px] px-3 py-1 rounded-full uppercase">AFTER (To-Be)</span>
+                            <h4 class="font-bold text-emerald-900 text-base mb-3"><i class="fa-solid fa-circle-check mr-1"></i> Smart Touch Kiosk & Color Micro-Navigation</h4>
+
+                            <!-- Visual Graphic -->
+                            <div class="bg-white border-2 border-slate-900 rounded-xl p-4 my-3 text-center min-h-[180px] flex flex-col justify-center items-center relative">
+                                <div class="text-4xl space-x-2">
+                                    <i class="fa-solid fa-display text-blue-600"></i>
+                                    <i class="fa-solid fa-route text-emerald-600"></i>
+                                </div>
+                                <div class="speech-bubble mt-4 text-xs font-bold text-slate-800">
+                                    "Kiosk printed my ticket: Counter 1 (Blue Zone). The floor lines lead right to it!"
+                                </div>
+                                <p class="text-[11px] font-semibold text-emerald-700 mt-2">Kannada/English Kiosk • Color-Coded Desk Floor Guidance</p>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-xl border border-emerald-200 text-xs text-emerald-950 font-medium">
+                                <strong class="text-emerald-700 block mb-1">Design Thinking Solution:</strong>
+                                Self-serve dual-language touchscreen kiosk categorizes services instantly and assigns a color-coded ticket matching physical floor lanes.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENE 3 -->
+                <div class="scene-card space-y-4" data-scene="3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-xl bg-ka-red text-white flex items-center justify-center font-black text-sm">3</span>
+                        <h3 class="text-xl font-bold text-slate-900">Scene 3: Waiting Area Experience</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- BEFORE PANEL -->
+                        <div class="comic-panel rounded-2xl p-5 bg-rose-50/40 relative">
+                            <span class="absolute top-3 right-3 bg-rose-600 text-white font-extrabold text-[10px] px-3 py-1 rounded-full uppercase">BEFORE (As-Is)</span>
+                            <h4 class="font-bold text-rose-900 text-base mb-3"><i class="fa-solid fa-circle-xmark mr-1"></i> Noise Fatigue & Anxiety Standing</h4>
+
+                            <!-- Visual Graphic -->
+                            <div class="bg-white border-2 border-slate-900 rounded-xl p-4 my-3 text-center min-h-[180px] flex flex-col justify-center items-center relative">
+                                <div class="text-4xl text-amber-600 space-x-2">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                    <i class="fa-solid fa-person-dots-from-line"></i>
+                                </div>
+                                <div class="speech-bubble mt-4 text-xs font-bold text-slate-800">
+                                    "Was that number 45 or 54?! The speaker is distorted and I can't leave my spot."
+                                </div>
+                                <p class="text-[11px] font-semibold text-rose-700 mt-2">Single display screen • Physical crowding in hallway</p>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-xl border border-rose-200 text-xs text-rose-950 font-medium">
+                                <strong class="text-rose-700 block mb-1">Problem Statement:</strong>
+                                Noise pollution and fear of missing one's turn forces citizens to cluster around counter desks, disrupting workflow.
+                            </div>
+                        </div>
+
+                        <!-- AFTER PANEL -->
+                        <div class="comic-panel rounded-2xl p-5 bg-emerald-50/40 relative">
+                            <span class="absolute top-3 right-3 bg-emerald-600 text-white font-extrabold text-[10px] px-3 py-1 rounded-full uppercase">AFTER (To-Be)</span>
+                            <h4 class="font-bold text-emerald-900 text-base mb-3"><i class="fa-solid fa-circle-check mr-1"></i> Proximity SMS Alerts & Digital TV Screen</h4>
+
+                            <!-- Visual Graphic -->
+                            <div class="bg-white border-2 border-slate-900 rounded-xl p-4 my-3 text-center min-h-[180px] flex flex-col justify-center items-center relative">
+                                <div class="text-4xl text-blue-600 space-x-2">
+                                    <i class="fa-solid fa-bell font-bold text-amber-500"></i>
+                                    <i class="fa-solid fa-chair text-emerald-600"></i>
+                                </div>
+                                <div class="speech-bubble mt-4 text-xs font-bold text-slate-800">
+                                    "I sat comfortably reading news until my phone buzzed with an SMS alert!"
+                                </div>
+                                <p class="text-[11px] font-semibold text-emerald-700 mt-2">Haptic Push Alert • Clear LED Counter Display Boards</p>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-xl border border-emerald-200 text-xs text-emerald-950 font-medium">
+                                <strong class="text-emerald-700 block mb-1">Design Thinking Solution:</strong>
+                                Automated SMS triggers alert citizens when their turn is 2-3 positions away, allowing them to relax seated or stay outside nearby.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENE 4 -->
+                <div class="scene-card space-y-4" data-scene="4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-xl bg-ka-red text-white flex items-center justify-center font-black text-sm">4</span>
+                        <h3 class="text-xl font-bold text-slate-900">Scene 4: Counter Service & Payment</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- BEFORE PANEL -->
+                        <div class="comic-panel rounded-2xl p-5 bg-rose-50/40 relative">
+                            <span class="absolute top-3 right-3 bg-rose-600 text-white font-extrabold text-[10px] px-3 py-1 rounded-full uppercase">BEFORE (As-Is)</span>
+                            <h4 class="font-bold text-rose-900 text-base mb-3"><i class="fa-solid fa-circle-xmark mr-1"></i> Missing Papers & Slow Cash Change</h4>
+
+                            <!-- Visual Graphic -->
+                            <div class="bg-white border-2 border-slate-900 rounded-xl p-4 my-3 text-center min-h-[180px] flex flex-col justify-center items-center relative">
+                                <div class="text-4xl text-slate-700 space-x-2">
+                                    <i class="fa-solid fa-folder-open text-rose-500"></i>
+                                    <i class="fa-solid fa-money-bill-wave text-slate-400"></i>
+                                </div>
+                                <div class="speech-bubble mt-4 text-xs font-bold text-slate-800">
+                                    "You didn't bring a bill photocopy? You must go outside to copy and rejoin the queue!"
+                                </div>
+                                <p class="text-[11px] font-semibold text-rose-700 mt-2">Transaction aborts • Cash change delay (4-5 mins/person)</p>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-xl border border-rose-200 text-xs text-rose-950 font-medium">
+                                <strong class="text-rose-700 block mb-1">Problem Statement:</strong>
+                                Missing document requirements discovered at the counter force complete restarts, frustrating both staff and citizens.
+                            </div>
+                        </div>
+
+                        <!-- AFTER PANEL -->
+                        <div class="comic-panel rounded-2xl p-5 bg-emerald-50/40 relative">
+                            <span class="absolute top-3 right-3 bg-emerald-600 text-white font-extrabold text-[10px] px-3 py-1 rounded-full uppercase">AFTER (To-Be)</span>
+                            <h4 class="font-bold text-emerald-900 text-base mb-3"><i class="fa-solid fa-circle-check mr-1"></i> Pre-Verification Safeguard & Express UPI QR</h4>
+
+                            <!-- Visual Graphic -->
+                            <div class="bg-white border-2 border-slate-900 rounded-xl p-4 my-3 text-center min-h-[180px] flex flex-col justify-center items-center relative">
+                                <div class="text-4xl space-x-2">
+                                    <i class="fa-solid fa-qrcode text-slate-900"></i>
+                                    <i class="fa-solid fa-bolt text-amber-500"></i>
+                                </div>
+                                <div class="speech-bubble mt-4 text-xs font-bold text-slate-800">
+                                    "Checked my documents on app beforehand! Scanned QR and paid via UPI in 45 seconds!"
+                                </div>
+                                <p class="text-[11px] font-semibold text-emerald-700 mt-2">Digital Pre-Check Checklist • Rapid Counter QR Reader</p>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-xl border border-emerald-200 text-xs text-emerald-950 font-medium">
+                                <strong class="text-emerald-700 block mb-1">Design Thinking Solution:</strong>
+                                Interactive pre-check checklist prevents issuing tokens without required paperwork. Express UPI QR reduces payment time by 80%.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 2: LIVE FUNCTIONAL PROTOTYPE ENGINE                               -->
+        <!-- ========================================================================= -->
+        <section id="sectionPrototype" class="hidden space-y-6">
+            <!-- Role Selector Top Bar -->
+            <div class="bg-slate-900 text-white p-4 sm:p-5 rounded-3xl shadow-xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs font-extrabold uppercase text-ka-yellow tracking-widest">Live Prototype Engine</span>
+                    <h3 class="text-xl font-bold">Interactive Queue Simulator</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Switch between roles below to test real-time queue state synchronization</p>
+                </div>
+
+                <!-- Sub-Role Switcher Tabs -->
+                <div class="bg-slate-800 p-1.5 rounded-2xl flex border border-slate-700 text-xs font-bold w-full sm:w-auto">
+                    <button onclick="setPrototypeRole('citizen')" id="btnRoleCitizen" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl transition-all bg-ka-yellow text-slate-900 shadow">
+                        <i class="fa-solid fa-mobile-screen mr-1.5"></i> Citizen App
+                    </button>
+                    <button onclick="setPrototypeRole('kiosk')" id="btnRoleKiosk" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl transition-all text-slate-300 hover:text-white">
+                        <i class="fa-solid fa-desktop mr-1.5"></i> Touch Kiosk
+                    </button>
+                    <button onclick="setPrototypeRole('staff')" id="btnRoleStaff" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl transition-all text-slate-300 hover:text-white">
+                        <i class="fa-solid fa-gauge-high mr-1.5"></i> Staff & TV Display
+                    </button>
+                </div>
+            </div>
+
+            <!-- SUB-ROLE 1: CITIZEN MOBILE APP -->
+            <div id="roleCitizenView" class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    
+                    <!-- Form Column -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <!-- Live Center Traffic Card -->
+                        <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200">
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                                <div>
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Center Selected</span>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <i class="fa-solid fa-location-dot text-ka-red"></i>
+                                        <select id="citizenCenterSelect" onchange="switchCenterLocation(this.value)" class="font-bold text-slate-800 text-lg bg-transparent focus:outline-none cursor-pointer">
+                                            <option value="indiranagar">Indiranagar Center (100ft Rd)</option>
+                                            <option value="jayanagar">Jayanagar 4th Block Center</option>
+                                            <option value="malleshwaram">Malleshwaram 8th Main Center</option>
+                                            <option value="koramangala">Koramangala 5th Block Center</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <span class="pulse-badge bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Low Wait Time (~6 min)
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                                    <p class="text-[11px] text-slate-500 font-medium">People Waiting</p>
+                                    <p id="citizenMetricWaiting" class="text-2xl font-extrabold text-b1-blue mt-0.5">5</p>
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                                    <p class="text-[11px] text-slate-500 font-medium">Avg Transaction</p>
+                                    <p class="text-2xl font-extrabold text-slate-800 mt-0.5">2.2 <span class="text-xs font-normal">m/person</span></p>
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                                    <p class="text-[11px] text-slate-500 font-medium">Active Desks</p>
+                                    <p class="text-2xl font-extrabold text-emerald-600 mt-0.5">4/4</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ticket Generation Card -->
+                        <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 space-y-6">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-lg bg-ka-red text-white flex items-center justify-center text-xs font-black">1</span>
+                                    Select Service Category
+                                </h3>
+                                <p class="text-xs text-slate-500 mt-1">Smart triage routes you directly to specialized counters</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <button type="button" onclick="selectServiceCategory('utility')" id="cardSvc-utility" class="svc-select-btn text-left p-4 rounded-xl border-2 border-b1-blue bg-blue-50/50 transition-all">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-b1-blue font-bold text-[10px] uppercase tracking-wider">Blue Zone • Counter 1</span>
+                                        <i class="fa-solid fa-bolt text-b1-blue text-base"></i>
+                                    </div>
+                                    <h4 class="font-bold text-slate-800 text-sm">Utility Bills (BESCOM/BWSSB)</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Electricity, water bills & tax</p>
+                                </button>
+
+                                <button type="button" onclick="selectServiceCategory('govt')" id="cardSvc-govt" class="svc-select-btn text-left p-4 rounded-xl border-2 border-slate-200 hover:border-b1-green transition-all">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-b1-green font-bold text-[10px] uppercase tracking-wider">Green Zone • Counter 2</span>
+                                        <i class="fa-solid fa-file-contract text-b1-green text-base"></i>
+                                    </div>
+                                    <h4 class="font-bold text-slate-800 text-sm">Govt Certificates & RTC</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Pahani/RTC, Caste & Income cert.</p>
+                                </button>
+
+                                <button type="button" onclick="selectServiceCategory('aadhaar')" id="cardSvc-aadhaar" class="svc-select-btn text-left p-4 rounded-xl border-2 border-slate-200 hover:border-b1-orange transition-all">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-b1-orange font-bold text-[10px] uppercase tracking-wider">Orange Zone • Counter 3</span>
+                                        <i class="fa-solid fa-id-card text-b1-orange text-base"></i>
+                                    </div>
+                                    <h4 class="font-bold text-slate-800 text-sm">Aadhaar & Citizen ID</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Biometric updates, address change</p>
+                                </button>
+
+                                <button type="button" onclick="selectServiceCategory('express')" id="cardSvc-express" class="svc-select-btn text-left p-4 rounded-xl border-2 border-slate-200 hover:border-b1-purple transition-all">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-b1-purple font-bold text-[10px] uppercase tracking-wider">Purple Zone • Counter 4</span>
+                                        <i class="fa-solid fa-person-cane text-b1-purple text-base"></i>
+                                    </div>
+                                    <h4 class="font-bold text-slate-800 text-sm">Senior Priority & Fast-Pay</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Seniors (60+) & single UPI payment</p>
+                                </button>
+                            </div>
+
+                            <!-- Document Safeguard Checklist -->
+                            <div class="border-t border-slate-100 pt-4 space-y-2">
+                                <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-md bg-yellow-400 text-slate-900 flex items-center justify-center text-[10px] font-black">2</span>
+                                    Document Pre-Check Safeguard
+                                </h3>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 text-xs">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                        <span class="text-slate-700 font-medium">Account Number / Original Bill Copy</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                        <span class="text-slate-700 font-medium">Valid Photo Identification (Aadhaar / Passport)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Input Fields -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Citizen Name</label>
+                                    <input type="text" id="inputCitizenName" value="Ramesh Kumar" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-ka-red focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number (SMS)</label>
+                                    <input type="tel" id="inputCitizenPhone" value="98801 23456" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-ka-red focus:outline-none">
+                                </div>
+                            </div>
+
+                            <button onclick="actionGenerateVirtualToken()" class="w-full bg-gradient-to-r from-ka-red to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
+                                <i class="fa-solid fa-ticket-simple text-ka-yellow"></i>
+                                Generate Digital Queue Token
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Digital Token Output Column -->
+                    <div class="lg:col-span-5">
+                        <div class="sticky top-24 space-y-3">
+                            <h3 class="text-base font-bold text-slate-800">Your Virtual Pass</h3>
+
+                            <div class="bg-white rounded-2xl shadow-xl border-2 border-b1-blue overflow-hidden">
+                                <div id="passHeaderBanner" class="bg-b1-blue text-white p-4 flex items-center justify-between">
+                                    <div>
+                                        <span class="text-[9px] uppercase font-black tracking-widest text-blue-200">BANGALORE ONE DIGITAL PASS</span>
+                                        <h4 id="passServiceTitle" class="font-bold text-sm">Utility Bills (BESCOM/BWSSB)</h4>
+                                    </div>
+                                    <span id="passCounterBadge" class="bg-white/20 text-white font-bold text-xs px-2.5 py-1 rounded-full">
+                                        Counter 1
+                                    </span>
+                                </div>
+
+                                <div class="p-6 text-center space-y-4 ticket-receipt">
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Token Number</p>
+                                        <p id="passTokenDisplay" class="text-5xl font-black text-slate-900 tracking-tight my-1">A-108</p>
+                                        <p id="passHolderDisplay" class="text-xs font-semibold text-slate-600">Ramesh Kumar • 98801 23456</p>
+                                    </div>
+
+                                    <div class="bg-white p-3 rounded-xl border border-slate-200 inline-block shadow-inner">
+                                        <div id="citizenPassQrCode" class="flex justify-center"></div>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-2 text-left bg-slate-100 p-3 rounded-xl border border-slate-200 text-xs">
+                                        <div>
+                                            <span class="text-slate-400 block text-[9px] uppercase font-bold">Ahead of You</span>
+                                            <span id="passAheadCount" class="font-extrabold text-slate-800">2 People</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-slate-400 block text-[9px] uppercase font-bold">Est. Wait Time</span>
+                                            <span id="passEstTime" class="font-extrabold text-b1-blue">~ 5 Mins</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-slate-50 px-4 py-3 border-t border-slate-200 flex items-center justify-between text-xs">
+                                    <button onclick="triggerSimulatedSMSCall()" class="text-b1-blue font-bold hover:underline flex items-center gap-1">
+                                        <i class="fa-solid fa-bell"></i> Simulate SMS Call
+                                    </button>
+                                    <span class="text-slate-400 text-[10px]">Active Session</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SUB-ROLE 2: IN-CENTER TOUCH KIOSK -->
+            <div id="roleKioskView" class="hidden space-y-6">
+                <div class="max-w-4xl mx-auto bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-slate-700">
+                    <div class="flex flex-col sm:flex-row items-center justify-between border-b border-slate-700 pb-4 mb-6 gap-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-ka-yellow text-ka-red font-black text-2xl rounded-2xl flex items-center justify-center">
+                                B1
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-black text-white">BANGALORE ONE KIOSK</h2>
+                                <p class="text-xs text-slate-400">Touch screen to print physical paper ticket</p>
+                            </div>
+                        </div>
+
+                        <!-- Language Switcher -->
+                        <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs">
+                            <button onclick="toggleKioskLanguage('en')" id="btnKioskEn" class="px-4 py-1.5 rounded-lg font-bold bg-ka-yellow text-slate-900">English</button>
+                            <button onclick="toggleKioskLanguage('kn')" id="btnKioskKn" class="px-4 py-1.5 rounded-lg font-bold text-slate-300 font-kannada">ಕನ್ನಡ</button>
+                        </div>
+                    </div>
+
+                    <!-- Touch Screen Service Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button onclick="kioskPrintAction('utility')" class="bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 text-white p-6 rounded-2xl text-left shadow-lg active:scale-95 transition-all flex flex-col justify-between h-36 border border-blue-400/30">
+                            <div class="flex justify-between items-start">
+                                <i class="fa-solid fa-bolt text-3xl text-yellow-300"></i>
+                                <span class="bg-white/20 text-xs px-3 py-1 rounded-full font-bold">Counter 1</span>
+                            </div>
+                            <div>
+                                <p class="text-lg font-bold kiosk-trans" data-en="Utility Bill Payment" data-kn="ಉಪಯುಕ್ತತೆ ಬಿಲ್ ಪಾವತಿ">Utility Bill Payment</p>
+                                <p class="text-xs text-blue-100 mt-0.5">BESCOM Electricity & BWSSB Water</p>
+                            </div>
+                        </button>
+
+                        <button onclick="kioskPrintAction('govt')" class="bg-gradient-to-br from-emerald-600 to-emerald-800 hover:from-emerald-500 hover:to-emerald-700 text-white p-6 rounded-2xl text-left shadow-lg active:scale-95 transition-all flex flex-col justify-between h-36 border border-emerald-400/30">
+                            <div class="flex justify-between items-start">
+                                <i class="fa-solid fa-file-invoice text-3xl text-emerald-200"></i>
+                                <span class="bg-white/20 text-xs px-3 py-1 rounded-full font-bold">Counter 2</span>
+                            </div>
+                            <div>
+                                <p class="text-lg font-bold kiosk-trans" data-en="Revenue & Certificates" data-kn="ಕಂದಾಯ ಮತ್ತು ಪ್ರಮಾಣಪತ್ರಗಳು">Revenue & Certificates</p>
+                                <p class="text-xs text-emerald-100 mt-0.5">Pahani / RTC, Caste & Income Cert.</p>
+                            </div>
+                        </button>
+
+                        <button onclick="kioskPrintAction('aadhaar')" class="bg-gradient-to-br from-orange-600 to-orange-800 hover:from-orange-500 hover:to-orange-700 text-white p-6 rounded-2xl text-left shadow-lg active:scale-95 transition-all flex flex-col justify-between h-36 border border-orange-400/30">
+                            <div class="flex justify-between items-start">
+                                <i class="fa-solid fa-address-card text-3xl text-orange-200"></i>
+                                <span class="bg-white/20 text-xs px-3 py-1 rounded-full font-bold">Counter 3</span>
+                            </div>
+                            <div>
+                                <p class="text-lg font-bold kiosk-trans" data-en="Aadhaar & Identity" data-kn="ಆಧಾರ್ ಮತ್ತು ಗುರುತಿನ ಚೀಟಿ">Aadhaar & Identity</p>
+                                <p class="text-xs text-orange-100 mt-0.5">Biometric & Address Updating</p>
+                            </div>
+                        </button>
+
+                        <button onclick="kioskPrintAction('express')" class="bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white p-6 rounded-2xl text-left shadow-lg active:scale-95 transition-all flex flex-col justify-between h-36 border border-purple-400/30">
+                            <div class="flex justify-between items-start">
+                                <i class="fa-solid fa-person-cane text-3xl text-purple-200"></i>
+                                <span class="bg-white/20 text-xs px-3 py-1 rounded-full font-bold">Counter 4</span>
+                            </div>
+                            <div>
+                                <p class="text-lg font-bold kiosk-trans" data-en="Senior Citizen Priority" data-kn="ಹಿರಿಯ ನಾಗರಿಕರ ಆದ್ಯತೆ">Senior Citizen Priority</p>
+                                <p class="text-xs text-purple-100 mt-0.5">Express Fast-Track Desk</p>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Simulated Printer Output -->
+                    <div class="mt-8 bg-slate-800 p-6 rounded-2xl border border-slate-700 text-center relative">
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Ticket Dispenser Slot</p>
+
+                        <div id="kioskPrintOutput" class="hidden my-4 max-w-xs mx-auto bg-amber-50 text-slate-900 p-4 rounded-xl shadow-2xl border-2 border-dashed border-amber-400 transform transition-all duration-500">
+                            <p class="text-[9px] font-bold text-slate-400">BANGALORE ONE TICKET</p>
+                            <p id="kioskOutputToken" class="text-4xl font-black text-slate-900 my-1">A-109</p>
+                            <p id="kioskOutputTitle" class="text-xs font-bold text-b1-blue">Utility Bill Payment</p>
+                            <p id="kioskOutputZone" class="text-xs font-semibold text-slate-600 mt-1">Please proceed to Counter 1 (Blue Zone)</p>
+                        </div>
+
+                        <p id="kioskPrinterPrompt" class="text-xs font-medium text-slate-400 mt-2">Tap any service button above to print token</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-ROLE 3: STAFF DASHBOARD & OVERHEAD DISPLAY -->
+            <div id="roleStaffView" class="hidden space-y-6">
+                <!-- TV Screen Display -->
+                <div class="bg-slate-900 text-white p-6 rounded-3xl shadow-2xl border-4 border-slate-800">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-6">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                            <h3 class="text-xs font-bold tracking-widest uppercase text-slate-400">IN-CENTER OVERHEAD DISPLAY SCREEN</h3>
+                        </div>
+                        <p class="text-xs font-mono text-yellow-400" id="tvDisplayClock">12:00:00 PM</p>
+                    </div>
+
+                    <!-- 4 Counter Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-gradient-to-b from-blue-950 to-slate-900 border-2 border-b1-blue p-5 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold uppercase text-blue-300 tracking-wider">COUNTER 1 (BLUE)</span>
+                            <p class="text-xs text-slate-400 mt-0.5">Utility Bills</p>
+                            <div class="my-3 py-2 bg-slate-950 rounded-xl border border-blue-500/30">
+                                <p id="tvDesk1Token" class="text-3xl font-black text-yellow-400 font-mono">A-103</p>
+                            </div>
+                            <p id="tvDesk1Name" class="text-xs font-semibold text-emerald-400">Serving Ramesh K.</p>
+                        </div>
+
+                        <div class="bg-gradient-to-b from-emerald-950 to-slate-900 border-2 border-b1-green p-5 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold uppercase text-emerald-300 tracking-wider">COUNTER 2 (GREEN)</span>
+                            <p class="text-xs text-slate-400 mt-0.5">Certificates & RTC</p>
+                            <div class="my-3 py-2 bg-slate-950 rounded-xl border border-emerald-500/30">
+                                <p id="tvDesk2Token" class="text-3xl font-black text-yellow-400 font-mono">B-201</p>
+                            </div>
+                            <p id="tvDesk2Name" class="text-xs font-semibold text-emerald-400">Serving Priya M.</p>
+                        </div>
+
+                        <div class="bg-gradient-to-b from-orange-950 to-slate-900 border-2 border-b1-orange p-5 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold uppercase text-orange-300 tracking-wider">COUNTER 3 (ORANGE)</span>
+                            <p class="text-xs text-slate-400 mt-0.5">Aadhaar Services</p>
+                            <div class="my-3 py-2 bg-slate-950 rounded-xl border border-orange-500/30">
+                                <p id="tvDesk3Token" class="text-3xl font-black text-yellow-400 font-mono">C-305</p>
+                            </div>
+                            <p id="tvDesk3Name" class="text-xs font-semibold text-emerald-400">Serving Syed A.</p>
+                        </div>
+
+                        <div class="bg-gradient-to-b from-purple-950 to-slate-900 border-2 border-b1-purple p-5 rounded-2xl text-center">
+                            <span class="text-[10px] font-bold uppercase text-purple-300 tracking-wider">COUNTER 4 (PURPLE)</span>
+                            <p class="text-xs text-slate-400 mt-0.5">Senior Priority</p>
+                            <div class="my-3 py-2 bg-slate-950 rounded-xl border border-purple-500/30">
+                                <p id="tvDesk4Token" class="text-3xl font-black text-yellow-400 font-mono">D-402</p>
+                            </div>
+                            <p id="tvDesk4Name" class="text-xs font-semibold text-emerald-400">Serving Lakshmi B.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staff Controller -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="lg:col-span-7 bg-white rounded-2xl p-6 shadow-md border border-slate-200 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-base">Staff Operator Panel</h3>
+                                <p class="text-xs text-slate-500">Call tokens and manage counter progression</p>
+                            </div>
+
+                            <select id="selectOperatorDesk" class="bg-slate-100 border border-slate-300 text-xs font-bold rounded-lg px-3 py-1.5 focus:outline-none">
+                                <option value="1">Desk 1 (Utility - Blue)</option>
+                                <option value="2">Desk 2 (Govt - Green)</option>
+                                <option value="3">Desk 3 (Aadhaar - Orange)</option>
+                                <option value="4">Desk 4 (Senior - Purple)</option>
+                            </select>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Now Calling</span>
+                                <h4 id="activeDeskCurrentToken" class="text-3xl font-black text-b1-blue">A-103</h4>
+                            </div>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">In Session</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onclick="staffActionCallNext()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow transition-all flex items-center justify-center gap-2 text-xs">
+                                <i class="fa-solid fa-bullhorn"></i> Call Next Token
+                            </button>
+                            <button onclick="staffActionComplete()" class="bg-b1-blue hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow transition-all flex items-center justify-center gap-2 text-xs">
+                                <i class="fa-solid fa-circle-check"></i> Complete & Next
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Live Queue List -->
+                    <div class="lg:col-span-5 bg-white rounded-2xl p-6 shadow-md border border-slate-200 flex flex-col h-[320px]">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 class="text-sm font-bold text-slate-900">Active Waiting List</h3>
+                            <span id="badgeQueueLength" class="bg-blue-100 text-blue-800 text-xs font-extrabold px-2.5 py-0.5 rounded-full">5 Waiting</span>
+                        </div>
+
+                        <div id="staffQueueItemsContainer" class="flex-1 overflow-y-auto space-y-2 mt-3 pr-1">
+                            <!-- JS Items Inserted Here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 3: DESIGN THINKING METRICS & OUTCOMES                            -->
+        <!-- ========================================================================= -->
+        <section id="sectionOutcomes" class="hidden space-y-8">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+                <div>
+                    <span class="text-xs font-black uppercase text-ka-red tracking-widest">Impact Assessment</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">Design Thinking Intervention Metrics</h2>
+                    <p class="text-sm text-slate-600 mt-1">Quantitative and qualitative improvements after implementing the Namma Bangalore One Smart Queue System.</p>
+                </div>
+
+                <!-- 4 KPI Metrics Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-gradient-to-br from-blue-50 to-white p-5 rounded-2xl border border-blue-200 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-b1-blue text-white flex items-center justify-center font-bold text-lg mb-3">
+                            <i class="fa-solid fa-stopwatch"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-500 uppercase">Average Wait Time</span>
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <span class="text-3xl font-black text-slate-900">8 Mins</span>
+                            <span class="text-xs font-bold text-emerald-600"><i class="fa-solid fa-arrow-down"></i> 82%</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1">Reduced from 45 mins peak average.</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-emerald-50 to-white p-5 rounded-2xl border border-emerald-200 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-b1-green text-white flex items-center justify-center font-bold text-lg mb-3">
+                            <i class="fa-solid fa-signs-post"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-500 uppercase">Counter Misdirection</span>
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <span class="text-3xl font-black text-slate-900">-95%</span>
+                            <span class="text-xs font-bold text-emerald-600"><i class="fa-solid fa-arrow-down"></i> Drop</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1">Color-coded floor routing eliminates wrong desk joins.</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-amber-50 to-white p-5 rounded-2xl border border-amber-200 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg mb-3">
+                            <i class="fa-solid fa-face-smile"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-500 uppercase">Citizen CSAT Rating</span>
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <span class="text-3xl font-black text-slate-900">4.8 / 5</span>
+                            <span class="text-xs font-bold text-emerald-600"><i class="fa-solid fa-arrow-up"></i> +2.4</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1">Up from 2.4/5 in post-service feedback surveys.</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-purple-50 to-white p-5 rounded-2xl border border-purple-200 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-b1-purple text-white flex items-center justify-center font-bold text-lg mb-3">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-500 uppercase">Hourly Throughput</span>
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <span class="text-3xl font-black text-slate-900">3.2x</span>
+                            <span class="text-xs font-bold text-emerald-600"><i class="fa-solid fa-arrow-up"></i> Gain</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1">Driven by Express UPI QR rapid payments.</p>
+                    </div>
+                </div>
+
+                <!-- Detailed Comparison Table -->
+                <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                            <tr>
+                                <th class="p-4">Service Metric</th>
+                                <th class="p-4">Legacy Process (Before)</th>
+                                <th class="p-4">Design Thinking Solution (After)</th>
+                                <th class="p-4">Impact Goal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-slate-700">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4 font-bold text-slate-900">Queue Visibility</td>
+                                <td class="p-4 text-rose-700">Blind arrival; physical crowding</td>
+                                <td class="p-4 text-emerald-700">Live web/WhatsApp queue status</td>
+                                <td class="p-4 font-semibold">100% pre-arrival visibility</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4 font-bold text-slate-900">Triage & Entry</td>
+                                <td class="p-4 text-rose-700">Unstructured paper lists; manual desk asking</td>
+                                <td class="p-4 text-emerald-700">Color-coded kiosk & floor line navigation</td>
+                                <td class="p-4 font-semibold">Zero misdirected queue hops</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4 font-bold text-slate-900">Waiting Comfort</td>
+                                <td class="p-4 text-rose-700">Standing tethered to single audio speaker</td>
+                                <td class="p-4 text-emerald-700">Haptic SMS alerts when turn is near</td>
+                                <td class="p-4 font-semibold">Seated relaxed waiting area</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4 font-bold text-slate-900">Document Validation</td>
+                                <td class="p-4 text-rose-700">Missing papers discovered at counter</td>
+                                <td class="p-4 text-emerald-700">Interactive digital pre-check checklist</td>
+                                <td class="p-4 font-semibold">Zero turn-back rejections</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>Namma Bangalore One • Design Thinking Academic Case Study & Prototype</p>
+            <p class="font-semibold text-slate-700">Government of Karnataka • e-Governance Department</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT STATE ENGINE -->
+    <script>
+        // Global State
+        let currentCenter = 'indiranagar';
+        let currentServiceCategory = 'utility';
+        let totalServedToday = 42;
+
+        let queueData = {
+            utility: [
+                { token: 'A-103', name: 'Ramesh Kumar', phone: '98801 23456', status: 'serving', desk: 1 },
+                { token: 'A-104', name: 'Suresh Gowda', phone: '98450 11223', status: 'waiting', desk: 1 },
+                { token: 'A-105', name: 'Ananya Rao', phone: '99001 88776', status: 'waiting', desk: 1 }
+            ],
+            govt: [
+                { token: 'B-201', name: 'Priya M.', phone: '97400 33445', status: 'serving', desk: 2 },
+                { token: 'B-202', name: 'Kiran Kumar', phone: '98860 55443', status: 'waiting', desk: 2 }
+            ],
+            aadhaar: [
+                { token: 'C-305', name: 'Syed Ali', phone: '96111 22334', status: 'serving', desk: 3 },
+                { token: 'C-306', name: 'Deepa Hegde', phone: '94480 66778', status: 'waiting', desk: 3 }
+            ],
+            express: [
+                { token: 'D-402', name: 'Lakshmi B.', phone: '98440 99887', status: 'serving', desk: 4 },
+                { token: 'D-403', name: 'Venkatraman', phone: '98800 12121', status: 'waiting', desk: 4 }
+            ]
+        };
+
+        let myActiveToken = {
+            token: 'A-108',
+            service: 'utility',
+            name: 'Ramesh Kumar',
+            phone: '98801 23456',
+            pos: 2,
+            estWait: '~ 5 Mins'
+        };
+
+        // Initialize application
+        window.onload = function() {
+            renderQrCode('B1-INDIRANAGAR-A108');
+            updateGlobalUI();
+            startClock();
+        };
+
+        // Render QR Code helper
+        function renderQrCode(text) {
+            const container = document.getElementById('citizenPassQrCode');
+            container.innerHTML = '';
+            new QRCode(container, {
+                text: text,
+                width: 100,
+                height: 100,
+                colorDark: "#0f172a",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        // Main Tab Switcher (Storyboard / Prototype / Outcomes)
+        function switchMainTab(tabKey) {
+            document.getElementById('sectionStoryboard').classList.add('hidden');
+            document.getElementById('sectionPrototype').classList.add('hidden');
+            document.getElementById('sectionOutcomes').classList.add('hidden');
+
+            document.getElementById('tabBtnStoryboard').className = "px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 text-white hover:bg-white/10";
+            document.getElementById('tabBtnPrototype').className = "px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 text-white hover:bg-white/10";
+            document.getElementById('tabBtnOutcomes').className = "px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 text-white hover:bg-white/10";
+
+            if (tabKey === 'storyboard') {
+                document.getElementById('sectionStoryboard').classList.remove('hidden');
+                document.getElementById('tabBtnStoryboard').className = "px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 bg-ka-yellow text-slate-900 font-bold shadow-sm";
+            } else if (tabKey === 'prototype') {
+                document.getElementById('sectionPrototype').classList.remove('hidden');
+                document.getElementById('tabBtnPrototype').className = "px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 bg-ka-yellow text-slate-900 font-bold shadow-sm";
+            } else if (tabKey === 'outcomes') {
+                document.getElementById('sectionOutcomes').classList.remove('hidden');
+                document.getElementById('tabBtnOutcomes').className = "px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 bg-ka-yellow text-slate-900 font-bold shadow-sm";
+            }
+        }
+
+        // Sub-Role Switcher inside Prototype
+        function setPrototypeRole(roleKey) {
+            document.getElementById('roleCitizenView').classList.add('hidden');
+            document.getElementById('roleKioskView').classList.add('hidden');
+            document.getElementById('roleStaffView').classList.add('hidden');
+
+            document.getElementById('btnRoleCitizen').className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl transition-all text-slate-300 hover:text-white";
+            document.getElementById('btnRoleKiosk').className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl transition-all text-slate-300 hover:text-white";
+            document.getElementById('btnRoleStaff').className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl transition-all text-slate-300 hover:text-white";
+
+            if (roleKey === 'citizen') {
+                document.getElementById('roleCitizenView').classList.remove('hidden');
+                document.getElementById('btnRoleCitizen').className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl transition-all bg-ka-yellow text-slate-900 shadow font-bold";
+            } else if (roleKey === 'kiosk') {
+                document.getElementById('roleKioskView').classList.remove('hidden');
+                document.getElementById('btnRoleKiosk').className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl transition-all bg-ka-yellow text-slate-900 shadow font-bold";
+            } else if (roleKey === 'staff') {
+                document.getElementById('roleStaffView').classList.remove('hidden');
+                document.getElementById('btnRoleStaff').className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl transition-all bg-ka-yellow text-slate-900 shadow font-bold";
+            }
+        }
+
+        // Storyboard Scene Filters
+        function filterScene(sceneNo) {
+            const scenes = document.querySelectorAll('.scene-card');
+            const btns = ['btnSceneAll', 'btnScene1', 'btnScene2', 'btnScene3', 'btnScene4'];
+            
+            btns.forEach(b => {
+                const el = document.getElementById(b);
+                if (el) el.className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200";
+            });
+
+            if (sceneNo === 'all') {
+                document.getElementById('btnSceneAll').className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white";
+                scenes.forEach(s => s.classList.remove('hidden'));
+            } else {
+                document.getElementById(`btnScene${sceneNo}`).className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white";
+                scenes.forEach(s => {
+                    if (s.getAttribute('data-scene') == sceneNo) {
+                        s.classList.remove('hidden');
+                    } else {
+                        s.classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        // Service Category Picker (Citizen View)
+        function selectServiceCategory(svcKey) {
+            currentServiceCategory = svcKey;
+            const btns = document.querySelectorAll('.svc-select-btn');
+            btns.forEach(b => b.className = "svc-select-btn text-left p-4 rounded-xl border-2 border-slate-200 hover:bg-slate-50 transition-all");
+
+            const activeBtn = document.getElementById(`cardSvc-${svcKey}`);
+            if (svcKey === 'utility') activeBtn.className = "svc-select-btn text-left p-4 rounded-xl border-2 border-b1-blue bg-blue-50/50 transition-all";
+            if (svcKey === 'govt') activeBtn.className = "svc-select-btn text-left p-4 rounded-xl border-2 border-b1-green bg-emerald-50/50 transition-all";
+            if (svcKey === 'aadhaar') activeBtn.className = "svc-select-btn text-left p-4 rounded-xl border-2 border-b1-orange bg-orange-50/50 transition-all";
+            if (svcKey === 'express') activeBtn.className = "svc-select-btn text-left p-4 rounded-xl border-2 border-b1-purple bg-purple-50/50 transition-all";
+        }
+
+        // Generate Virtual Token
+        function actionGenerateVirtualToken() {
+            const name = document.getElementById('inputCitizenName').value || 'Citizen';
+            const phone = document.getElementById('inputCitizenPhone').value || '98800 00000';
+
+            let prefix = 'A';
+            let title = 'Utility Bills (BESCOM/BWSSB)';
+            let deskNo = 1;
+            let bannerBg = 'bg-b1-blue';
+
+            if (currentServiceCategory === 'govt') { prefix = 'B'; title = 'Govt Certificates & RTC'; deskNo = 2; bannerBg = 'bg-b1-green'; }
+            if (currentServiceCategory === 'aadhaar') { prefix = 'C'; title = 'Aadhaar & Citizen ID'; deskNo = 3; bannerBg = 'bg-b1-orange'; }
+            if (currentServiceCategory === 'express') { prefix = 'D'; title = 'Senior Citizen Priority'; deskNo = 4; bannerBg = 'bg-b1-purple'; }
+
+            const randomNum = Math.floor(110 + Math.random() * 30);
+            const tokenStr = `${prefix}-${randomNum}`;
+
+            queueData[currentServiceCategory].push({
+                token: tokenStr,
+                name: name,
+                phone: phone,
+                status: 'waiting',
+                desk: deskNo
+            });
+
+            myActiveToken = {
+                token: tokenStr,
+                service: currentServiceCategory,
+                name: name,
+                phone: phone,
+                pos: queueData[currentServiceCategory].filter(i => i.status === 'waiting').length,
+                estWait: `~ ${Math.floor(Math.random() * 4 + 3)} Mins`
+            };
+
+            // Update Pass UI
+            document.getElementById('passTokenDisplay').innerText = tokenStr;
+            document.getElementById('passServiceTitle').innerText = title;
+            document.getElementById('passCounterBadge').innerText = `Counter ${deskNo}`;
+            document.getElementById('passHeaderBanner').className = `${bannerBg} text-white p-4 flex items-center justify-between`;
+            document.getElementById('passHolderDisplay').innerText = `${name} • ${phone}`;
+            document.getElementById('passAheadCount').innerText = `${myActiveToken.pos} People`;
+            document.getElementById('passEstTime').innerText = myActiveToken.estWait;
+
+            renderQrCode(`B1-${currentCenter.toUpperCase()}-${tokenStr}`);
+            updateGlobalUI();
+
+            showSmsAlert(`Digital Token ${tokenStr} confirmed for ${title}. Position in queue: #${myActiveToken.pos}.`);
+        }
+
+        // Kiosk Printer Simulation
+        function kioskPrintAction(svcKey) {
+            let prefix = 'A';
+            let title = 'Utility Bill Payment';
+            let zone = 'Counter 1 (Blue Zone)';
+            let deskNo = 1;
+
+            if (svcKey === 'govt') { prefix = 'B'; title = 'Revenue & Certificates'; zone = 'Counter 2 (Green Zone)'; deskNo = 2; }
+            if (svcKey === 'aadhaar') { prefix = 'C'; title = 'Aadhaar & Identity'; zone = 'Counter 3 (Orange Zone)'; deskNo = 3; }
+            if (svcKey === 'express') { prefix = 'D'; title = 'Senior Citizen Priority'; zone = 'Counter 4 (Purple Zone)'; deskNo = 4; }
+
+            const num = Math.floor(115 + Math.random() * 30);
+            const tokenStr = `${prefix}-${num}`;
+
+            queueData[svcKey].push({
+                token: tokenStr,
+                name: 'Kiosk Visitor',
+                phone: 'N/A',
+                status: 'waiting',
+                desk: deskNo
+            });
+
+            document.getElementById('kioskOutputToken').innerText = tokenStr;
+            document.getElementById('kioskOutputTitle').innerText = title;
+            document.getElementById('kioskOutputZone').innerText = `Please proceed to ${zone}`;
+
+            const box = document.getElementById('kioskPrintOutput');
+            box.classList.remove('hidden');
+
+            playAudioChime();
+            updateGlobalUI();
+
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 4000);
+        }
+
+        // Toggle Kiosk Language
+        function toggleKioskLanguage(lang) {
+            const elements = document.querySelectorAll('.kiosk-trans');
+            const btnEn = document.getElementById('btnKioskEn');
+            const btnKn = document.getElementById('btnKioskKn');
+
+            if (lang === 'kn') {
+                btnKn.className = "px-4 py-1.5 rounded-lg font-bold bg-ka-yellow text-slate-900 font-kannada";
+                btnEn.className = "px-4 py-1.5 rounded-lg font-bold text-slate-300";
+                elements.forEach(el => el.innerText = el.getAttribute('data-kn'));
+            } else {
+                btnEn.className = "px-4 py-1.5 rounded-lg font-bold bg-ka-yellow text-slate-900";
+                btnKn.className = "px-4 py-1.5 rounded-lg font-bold text-slate-300 font-kannada";
+                elements.forEach(el => el.innerText = el.getAttribute('data-en'));
+            }
+        }
+
+        // Staff Desk Actions
+        function staffActionCallNext() {
+            const deskVal = document.getElementById('selectOperatorDesk').value;
+            let svcKey = 'utility';
+            if (deskVal === '2') svcKey = 'govt';
+            if (deskVal === '3') svcKey = 'aadhaar';
+            if (deskVal === '4') svcKey = 'express';
+
+            const waitingList = queueData[svcKey].filter(i => i.status === 'waiting');
+            if (waitingList.length > 0) {
+                const next = waitingList[0];
+                next.status = 'serving';
+
+                document.getElementById(`tvDesk${deskVal}Token`).innerText = next.token;
+                document.getElementById(`tvDesk${deskVal}Name`).innerText = `Serving ${next.name}`;
+                document.getElementById('activeDeskCurrentToken').innerText = next.token;
+
+                playAudioChime();
+                showSmsAlert(`🔔 Token ${next.token}: Please report to Counter ${deskVal} immediately!`);
+            } else {
+                alert("No citizens waiting in this counter category!");
+            }
+            updateGlobalUI();
+        }
+
+        function staffActionComplete() {
+            totalServedToday++;
+            staffActionCallNext();
+        }
+
+        // Global UI Sync
+        function updateGlobalUI() {
+            let totalWaiting = 0;
+            Object.keys(queueData).forEach(k => {
+                totalWaiting += queueData[k].filter(i => i.status === 'waiting').length;
+            });
+
+            document.getElementById('citizenMetricWaiting').innerText = totalWaiting;
+            document.getElementById('badgeQueueLength').innerText = `${totalWaiting} Waiting`;
+
+            // Render Queue List
+            const listContainer = document.getElementById('staffQueueItemsContainer');
+            listContainer.innerHTML = '';
+
+            Object.keys(queueData).forEach(k => {
+                queueData[k].forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = "p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs";
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2.5">
+                            <span class="font-black font-mono text-slate-800 text-sm">${item.token}</span>
+                            <div>
+                                <p class="font-bold text-slate-700">${item.name}</p>
+                                <p class="text-[9px] text-slate-400">Counter ${item.desk}</p>
+                            </div>
+                        </div>
+                        <span class="${item.status === 'serving' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} px-2 py-0.5 rounded-full font-bold text-[9px] uppercase">
+                            ${item.status}
+                        </span>
+                    `;
+                    listContainer.appendChild(row);
+                });
+            });
+        }
+
+        function switchCenterLocation(val) {
+            currentCenter = val;
+        }
+
+        function showSmsAlert(msg) {
+            document.getElementById('smsMessageText').innerText = msg;
+            const el = document.getElementById('smsSimulator');
+            el.classList.remove('hidden');
+        }
+
+        function hideSmsAlert() {
+            document.getElementById('smsSimulator').classList.add('hidden');
+        }
+
+        function triggerSimulatedSMSCall() {
+            showSmsAlert(`🚨 Token ${myActiveToken.token}: Your turn has arrived! Please head to Counter 1 (Blue Zone).`);
+            playAudioChime();
+        }
+
+        // Synthesize Audio Chime
+        function playAudioChime() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
+
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + 0.6);
+            } catch (e) {
+                console.log("Audio play blocked by browser policy");
+            }
+        }
+
+        function startClock() {
+            setInterval(() => {
+                const clock = document.getElementById('tvDisplayClock');
+                if (clock) clock.innerText = new Date().toLocaleTimeString();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
